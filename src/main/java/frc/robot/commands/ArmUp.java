@@ -7,38 +7,40 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Robot;
+import java.util.function.BooleanSupplier;
 
-public class ArmUp extends CommandBase {
+import edu.wpi.first.wpilibj2.command.*;
+import frc.robot.subsystems.*;
+
+public class ArmUp extends WaitUntilCommand {
   /**
    * Creates a new ArmUp.
    */
-  public ArmUp() {
-    addRequirements(Robot.m_arm);
+
+  private Arm m_arm;
+
+  public ArmUp(Arm subsystem, BooleanSupplier btnState) {
+    super(btnState);
+    addRequirements(subsystem);
+    m_arm = subsystem;
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    m_arm.reset();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Robot.m_arm.raise();
+    m_arm.raise();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    Robot.m_arm.stop();
-  }
-
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return !Robot.m_oi.getArmUpBut();
+    m_arm.stop();
   }
 }
