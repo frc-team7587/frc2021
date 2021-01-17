@@ -6,7 +6,7 @@
 /*----------------------------------------------------------------------------*/
 
 package frc.robot.subsystems;
-
+import static frc.robot.Constants.*;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
@@ -16,17 +16,14 @@ public class Hanger extends SubsystemBase {
   /**
    * Creates a new Hanger.
    */
-  private final TalonSRX talon = new TalonSRX(2);
-
-  public Hanger() {
-  }
+  private final TalonSRX talon = new TalonSRX(HANGER_TALON_ID);
 
   public void extend() {
-    talon.set(ControlMode.PercentOutput, 0.25);
+    talon.set(ControlMode.PercentOutput, -HANGER_MAX_SPEED);
   }
 
   public void retract() {
-    talon.set(ControlMode.PercentOutput, -0.25);
+    talon.set(ControlMode.PercentOutput, HANGER_MAX_SPEED);
   }
 
   public void stop() {

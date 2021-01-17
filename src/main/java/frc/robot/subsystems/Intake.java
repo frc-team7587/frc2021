@@ -7,6 +7,8 @@
 
 package frc.robot.subsystems;
 
+import static frc.robot.Constants.*;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
@@ -16,18 +18,14 @@ public class Intake extends SubsystemBase {
   /**
    * Creates a new Intake.
    */
-  TalonSRX talon = new TalonSRX(3);
-
-  public Intake() {
-
-  }
+  TalonSRX talon = new TalonSRX(INTAKE_TALON_ID);
 
   public void in() {
-    talon.set(ControlMode.PercentOutput, .8); // may need to change this number later
+    talon.set(ControlMode.PercentOutput, INTAKE_MAX_SPEED); // may need to change this number later
   }
 
   public void out() {
-    talon.set(ControlMode.PercentOutput, -.8); // also a guesstimate number
+    talon.set(ControlMode.PercentOutput, -INTAKE_MAX_SPEED); // also a guesstimate number
   }
 
   public void stop() {
