@@ -7,31 +7,34 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.revrobotics.*;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import static frc.robot.Constants.*;
+// import edu.wpi.first.wpilibj.PWMSparkMax;
+// import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Arm extends SubsystemBase {
   /**
    * Creates a new Arm.
    */
-  private final TalonSRX talon = new TalonSRX(1);
-
-  public Arm() {
-
-  }
+  private final CANSparkMax sparky = new CANSparkMax(1, MotorType.kBrushless);
 
   public void raise() {
-    talon.set(ControlMode.PercentOutput, 1);
+    sparky.set(-ARM_MAX_SPEED);
   }
 
   public void lower() {
-    talon.set(ControlMode.PercentOutput, -1);
+    sparky.set(0.25 * ARM_MAX_SPEED);
   }
 
   public void stop() {
-    talon.set(ControlMode.PercentOutput, 0);
+    sparky.set(0);
+  }
+
+  public void reset() {
+    sparky.restoreFactoryDefaults();
   }
 
   @Override

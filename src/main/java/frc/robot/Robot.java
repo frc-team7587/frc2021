@@ -7,20 +7,12 @@
 
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.commands.AutoForward;
-import frc.robot.commands.AutoOutput;
-import frc.robot.commands.AutoSpin;
-import frc.robot.commands.TeleOpDrive;
-import frc.robot.subsystems.Arm;
-import frc.robot.subsystems.DriveTrain;
-import frc.robot.subsystems.Hanger;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Spinner;
+
+import edu.wpi.first.wpilibj2.command.*;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -34,14 +26,8 @@ public class Robot extends TimedRobot {
   // private static final String kCustomAuto = "My Auto";
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
-
-  public static DriveTrain m_drive = new DriveTrain();
-  public static Intake m_intake = new Intake();
-  public static Hanger m_hanger = new Hanger();
-  public static Spinner m_spinner = new Spinner();
-  public static Arm m_arm = new Arm();
-  public static Command defaultCom = new TeleOpDrive();
-  public static OI m_oi = new OI();
+  private Command m_autoCommand;
+  private static RobotContainer m_robotContainer;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -52,18 +38,18 @@ public class Robot extends TimedRobot {
     // m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     // m_chooser.addOption("My Auto", kCustomAuto);
     // SmartDashboard.putData("Auto choices", m_chooser);
+    CameraServer.getInstance().startAutomaticCapture();
     m_chooser.addOption("Spin 1 sec 25%", "AutoSpin()");
     m_chooser.addOption("Forward 1 sec 25%", "AutoForward()");
     m_chooser.addOption("Release balls", "ReleaseBalls()");
     SmartDashboard.putData("AutoChoices", m_chooser);
+    m_robotContainer = new RobotContainer();
   }
 
-  // public static DriveTrain getDriveTrain(){
-  // if(m_drive==null){
-  // m_drive = new DriveTrain();
-  // }
-  // return m_drive;
-  // }
+  public static RobotContainer getRoCon() {
+    return m_robotContainer;
+  }
+
   /**
    * This function is called every robot packet, no matter the mode. Use this for
    * items like diagnostics that you want ran during disabled, autonomous,
@@ -73,6 +59,7 @@ public class Robot extends TimedRobot {
    * This runs after the mode specific periodic functions, but before LiveWindow
    * and SmartDashboard integrated updating.
    */
+
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
@@ -92,24 +79,10 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    m_autoSelected = m_chooser.getSelected();
-    SmartDashboard.getString("AutoChoices", kDefaultAuto);
-    // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
-    System.out.println("Auto selected: " + m_autoSelected);
-    switch (m_autoSelected) {
-    case "Spin 1 sec 25%":
-      // Put custom auto code here
-      new AutoSpin();
-      break;
-    case "Forward 1 sec 25%":
-      new AutoForward();
-      // Put default auto code here
-      break;
-    case "Release balls":
-      new AutoForward();
-      new AutoSpin();
-      new AutoOutput();
-      break;
+    m_autoCommand = m_robotContainer.getAutonomousCommand();
+
+    if (m_autoCommand != null) {
+      m_autoCommand.schedule();
     }
   }
 
@@ -121,12 +94,25 @@ public class Robot extends TimedRobot {
 
   }
 
+  @Override
+  public void teleopInit() {
+    if (m_autoCommand != null) {
+      m_autoCommand.cancel();
+    }
+  }
+
   /**
    * This function is called periodically during operator control.
    */
   @Override
   public void teleopPeriodic() {
-    m_drive.setDefaultCommand(defaultCom);
+  }
+
+  @Override
+  public void testInit() {
+    if (m_autoCommand != null) {
+      m_autoCommand.cancel();
+    }
   }
 
   /**

@@ -7,6 +7,7 @@
 
 package frc.robot.subsystems;
 
+import static frc.robot.Constants.*;
 import edu.wpi.first.wpilibj.PWMVictorSPX;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
@@ -18,19 +19,15 @@ public class DriveTrain extends SubsystemBase {
   /**
    * Creates a new DriveTrain.
    */
-  private final SpeedController left1 = new PWMVictorSPX(0);
-  private final SpeedController left2 = new PWMVictorSPX(1);
-  private final SpeedController right1 = new PWMVictorSPX(2);
-  private final SpeedController right2 = new PWMVictorSPX(3);
+  private final SpeedController left1 = new PWMVictorSPX(DRIVE_LEFT1);
+  private final SpeedController left2 = new PWMVictorSPX(DRIVE_LEFT2);
+  private final SpeedController right1 = new PWMVictorSPX(DRIVE_RIGHT1);
+  private final SpeedController right2 = new PWMVictorSPX(DRIVE_RIGHT2);
 
   private final SpeedControllerGroup left = new SpeedControllerGroup(left1, left2);
   private final SpeedControllerGroup right = new SpeedControllerGroup(right1, right2);
 
   private final DifferentialDrive m_drive = new DifferentialDrive(left, right);
-
-  public DriveTrain() {
-
-  }
 
   public void drive(double speed, double rotation) {
     m_drive.arcadeDrive(speed, rotation);
@@ -42,7 +39,6 @@ public class DriveTrain extends SubsystemBase {
 
   @Override
   public void setDefaultCommand(Command defaultCommand) {
-    // TODO Auto-generated method stub
     super.setDefaultCommand(defaultCommand);
   }
 
